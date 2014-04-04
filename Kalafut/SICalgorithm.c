@@ -26,7 +26,7 @@ step_fit AddStepSIC(double* pos,
   step_fit win_fit; //running best fit during this AddStepSIC iteration
   win_fit = InitializeFitToZeros(win_fit,n_dwell+1); win_fit.SIC=-1.0;
   int win_step_location=0; //keep track of the best trial step location
-  for(int i=0;i<n;i++) {
+  for(int i=1;i<n-1;i++) {
     if(step_indices[i]==0) {
       step_indices[i] = 1; // trial step location
       /* get means of the dwells */
@@ -44,7 +44,7 @@ step_fit AddStepSIC(double* pos,
       tmpright=tmpright/(j-i-1); j=0;
       /* get the new chisq (also remove the previous part) */
       double prev_mean=GetPreviousDwellMean(prev_fit,step_indices,i);
-      curr_fit.chisq=prev_fit.chisq*(n-n_dwell+1);
+      curr_fit.chisq=prev_fit.chisq*(n);
       //curr_fit.chisq-=pow(pos[i]-prev_mean,2.);
       j=i-1;
       while((step_indices[j]==0)&&(j>=0)) {
@@ -53,16 +53,14 @@ step_fit AddStepSIC(double* pos,
 	j-=1;
       }
       j=i; 
-      do { //different loop structure so I can remove the ith
-	   //chisq component. Turns out if you don't remove  
-	   //this single point you get a significant overfit
+      do {
 	curr_fit.chisq -= pow(pos[j]-prev_mean,2.);
 	curr_fit.chisq += pow(pos[j]-tmpright,2.);
 	j+=1;
       }
       while((step_indices[j]==0)&&(j<n));
-      curr_fit.chisq=curr_fit.chisq/(n-n_dwell+1+1);
-      curr_fit.SIC=((n_dwell+1))*log(n)+(n)*log(curr_fit.chisq);
+      curr_fit.chisq=(curr_fit.chisq)/(n);
+      curr_fit.SIC=/*100000000000.**/(n_dwell+2)*log(n)+(n)*log(curr_fit.chisq);//added a step so n_dwell currently reflects the number of steps for this addes step.
       if((curr_fit.SIC<win_fit.SIC)||(win_fit.SIC==-1.0)) {
 	win_fit = SetFitToZeros(win_fit,n_dwell+1);
 	win_step_location=i;

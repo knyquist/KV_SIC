@@ -1,2 +1,6 @@
 Rakefile
 Data/
+Fig*
+*.sic
+*.true
+liphart*
