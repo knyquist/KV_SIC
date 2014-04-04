@@ -4,5 +4,6 @@ Fig*
 *.sic
 *.true
 liphart*
-*~
+*.c~
+*.h~
 #*
