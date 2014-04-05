@@ -7,3 +7,5 @@ liphart*
 *.c~
 *.h~
 #*
+*.dat
+*.out
