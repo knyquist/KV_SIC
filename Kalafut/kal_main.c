@@ -33,7 +33,7 @@ int main(int argc, char *argv[] )
   /* Start Adding Steps, terminate when SIC no longer minimized */
   int n_dwells = 1; step_fit final_fit;
   step_fit prev_fit; prev_fit = InitializeFitToZeros(prev_fit,n_dwells);
-  int* step_indices; step_indices = (int*) malloc(numberofpoints*sizeof(int));  
+  int* step_indices; step_indices = (int*) malloc(numberofpoints*sizeof(int));
   for(int i=0;i<numberofpoints;i++) step_indices[i] = 0;
   do {
     // the last iteration's fit becomes the previous fit
@@ -47,6 +47,7 @@ int main(int argc, char *argv[] )
     prev_fit.chisq = this_fit.chisq;
     step_indices = UpdateStepIndices(prev_fit,n_dwells,step_indices);
     // resize this_fit's lists to allow space for the next fit
+    //error at line below
     this_fit = MakeFitOneDwellBigger(this_fit,n_dwells+1);
     this_fit = SetFitToZeros(this_fit,n_dwells+1); //populate with zeros
     this_fit = AddStepSIC(position,
@@ -57,7 +58,6 @@ int main(int argc, char *argv[] )
     n_dwells+=1;
   }
   while(this_fit.SIC < prev_fit.SIC);
-
   //output the fit!
   printf("%f %f\n", time[0], prev_fit.means[0]);
   for(int i=0;i<n_dwells-2;i++) {

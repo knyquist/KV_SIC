@@ -131,8 +131,8 @@ step_fit SetFitToZeros(step_fit fit,
 
 step_fit MakeFitOneDwellBigger(step_fit fit, 
 			       int newlength) {
-  fit.means = (double*) realloc(fit.means,(newlength*sizeof(double)));
-  fit.step_locations = (int*) realloc(fit.step_locations,((newlength-1)*sizeof(int)));
+  fit.means = (double*) realloc(fit.means,((newlength+1)*sizeof(double)));
+  fit.step_locations = (int*) realloc(fit.step_locations,((newlength)*sizeof(int)));
   if((fit.means!=NULL)||(fit.step_locations!=NULL)) {
     return fit;
   }
