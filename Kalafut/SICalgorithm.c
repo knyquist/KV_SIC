@@ -4,6 +4,8 @@
 #include <math.h>
 #include <time.h>
 
+/* calculates the first estimate (by having a single dwell placed at the 
+   mean of the entire dataset */ 
 step_fit NoStepSIC(double* pos,
 		   int n) {
   step_fit no_step;
@@ -16,6 +18,8 @@ step_fit NoStepSIC(double* pos,
   return no_step;
 }
 
+/* Adds a new step at each possible location and selects the best position
+   based on minimizing the SIC */
 step_fit AddStepSIC(double* pos, 
 		    int n, 
 		    int* step_indices,
@@ -60,7 +64,7 @@ step_fit AddStepSIC(double* pos,
       }
       while((step_indices[j]==0)&&(j<n));
       curr_fit.chisq=(curr_fit.chisq)/(n);
-      curr_fit.SIC=/*100000000000.**/(n_dwell+2)*log(n)+(n)*log(curr_fit.chisq);//added a step so n_dwell currently reflects the number of steps for this addes step.
+      curr_fit.SIC=(n_dwell+2)*log(n)+(n)*log(curr_fit.chisq);//added a step so n_dwell currently reflects the number of steps for this added step.
       if((curr_fit.SIC<win_fit.SIC)||(win_fit.SIC==-1.0)) {
 	win_fit = SetFitToZeros(win_fit,n_dwell+1);
 	win_step_location=i;
@@ -105,6 +109,8 @@ step_fit AddStepSIC(double* pos,
   return win_fit;
 }
 
+/* after defining new step_fit object, this initializes all variables within
+   object to zero */
 step_fit InitializeFitToZeros(step_fit fit, 
 			      int length_of_mean_list) {
   fit.means = (double*) malloc(length_of_mean_list*sizeof(double));
@@ -118,6 +124,10 @@ step_fit InitializeFitToZeros(step_fit fit,
   return fit;
 }
 
+/* takes existing step_fit object and initializes all variables to zero 
+   only real difference to InitializeFitToZeros is that fit.means and 
+   fit.step_locations have known size here (recall c's issue with 
+   variable length vectors */
 step_fit SetFitToZeros(step_fit fit, 
 		       int length_of_mean_list) {
   for(int i=0;i<length_of_mean_list;i++) {
@@ -129,6 +139,8 @@ step_fit SetFitToZeros(step_fit fit,
   return fit;
 }
 
+/* takes existing step_fit object and increases the size of fit.means and
+   fit.step_locations by one (allows object to accomodate additional step */
 step_fit MakeFitOneDwellBigger(step_fit fit, 
 			       int newlength) {
   fit.means = (double*) realloc(fit.means,((newlength+1)*sizeof(double)));
@@ -143,6 +155,7 @@ step_fit MakeFitOneDwellBigger(step_fit fit,
   }
 }
 
+/* updates the location of the steps */
 int* UpdateStepIndices(step_fit fit,
 		       int n_dwells,
 		       int* step_indices) {

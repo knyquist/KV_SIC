@@ -1,5 +1,5 @@
 /* Kristofor Nyquist 2012 April 7th 
-An SIC step fitting program using the recent paper by Kalafut
+An SIC step fitting program using method by Kalafut and Visscher
 Kalafut et. al. (2008)
 */
 
@@ -11,6 +11,10 @@ Kalafut et. al. (2008)
 #include "InputTrace.h"
 #include "SICalgorithm.h"
 
+/* this main function takes argument, which is the dataset file (see README)
+   I chose to do it this way, because it makes it easy to use a scripting 
+   language such as awk to loop through many different data files and output
+   fits in a single line */
 int main(int argc, char *argv[] )
 {
   /* Get the trace information */
@@ -26,6 +30,7 @@ int main(int argc, char *argv[] )
   }
   
   /* Initialize with No Step SIC calculation */
+  // step_fit object is defined in header. 
   step_fit this_fit; this_fit = InitializeFitToZeros(this_fit,1);
   this_fit = NoStepSIC(position,
 		       numberofpoints);
@@ -59,6 +64,8 @@ int main(int argc, char *argv[] )
   }
   while(this_fit.SIC < prev_fit.SIC);
   //output the fit!
+  //fit is output to screen, which you can dump to file using ">" symbol
+  //when you run the executable. See README for tips on how to run.
   printf("%f %f\n", time[0], prev_fit.means[0]);
   for(int i=0;i<n_dwells-2;i++) {
     printf("%f %f\n",time[prev_fit.step_locations[i]],prev_fit.means[i]);
